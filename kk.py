@@ -71,6 +71,12 @@ residents = pd.DataFrame(
      {'name': 'A', 'dept': 0}])
 products = pd.DataFrame(columns=['name', 'subcribers'])
 
+handle_message('add_product elmx 50 0 50 0')
+handle_message('add_product mez 30 30 30 10')
+handle_message('add_product tej 40 30 30 0')
+handle_message('add_product tejfol 34 33 33 0')
+handle_message('add_product tea 40 20 20 20')
+
 """
 handle_message('add_product elmex 50 0 50 0')
 handle_message('add_record P elmex 800')
@@ -79,11 +85,12 @@ print(handle_message('get_products'))
 print(handle_message('get_residents'))
 """
 
-
+"""
 print(handle_message('add_product elmex 50 0 50 0'))
 print(handle_message('add_record P elmex 800'))
 print(handle_message('get_products'))
 print(handle_message('get_residents'))
+"""
 
 """
 residents = pd.DataFrame(
