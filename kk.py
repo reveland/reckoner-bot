@@ -43,9 +43,9 @@ def add_record(buyer, product_name, value):
 def handle_message(p):
     p = p.split(' ')
     if p[0] == 'add_record':
-        return add_record(p[1], p[2], int(p[3]))
+        return add_record(p[1], p[2], float(p[3]))
     elif p[0] == 'add_product':
-        return add_product(p[1], {'P':int(p[2]), 'G':int(p[3]), 'E':int(p[4]), 'A':int(p[5])})
+        return add_product(p[1], {'P':float(p[2]), 'G':float(p[3]), 'E':float(p[4]), 'A':float(p[5])})
     elif p[0] == 'get_products':
         return str(products)
     elif p[0] == 'get_residents':
@@ -60,12 +60,12 @@ residents = pd.DataFrame(
      {'name': 'A', 'dept': 0}])
 products = pd.DataFrame(columns=['name', 'subcribers'])
 
-"""
+
 print(handle_message('add_product elmex 50 0 50 0'))
 print(handle_message('add_record P elmex 800'))
 print(handle_message('get_products'))
 print(handle_message('get_residents'))
-"""
+
 
 """
 residents = pd.DataFrame(
