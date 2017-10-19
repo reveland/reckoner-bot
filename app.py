@@ -2,13 +2,14 @@ import os
 import sys
 import json
 from datetime import datetime
-import kk
+from kk import KK
 
 import requests
 from flask import Flask, request
 
 app = Flask(__name__)
 
+KK = KK()
 
 @app.route('/', methods=['GET'])
 def verify():
@@ -18,9 +19,7 @@ def verify():
         if not request.args.get("hub.verify_token") == os.environ["VERIFY_TOKEN"]:
             return "Verification token mismatch", 403
         return request.args["hub.challenge"], 200
-
     return "Hello world", 200
-
 
 @app.route('/', methods=['POST'])
 def webhook():
@@ -41,7 +40,7 @@ def webhook():
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
 
-                    send_message(sender_id, kk.handle_message(message_text))
+                    send_message(sender_id, KK.handle_message(message_text))
 
                 if messaging_event.get("delivery"):  # delivery confirmation
                     pass
