@@ -2,6 +2,7 @@ import os
 import sys
 import json
 from datetime import datetime
+import kk
 
 import requests
 from flask import Flask, request
@@ -40,7 +41,7 @@ def webhook():
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
 
-                    send_message(sender_id, "roger that!")
+                    send_message(sender_id, kk.handle_message(message_text))
 
                 if messaging_event.get("delivery"):  # delivery confirmation
                     pass
