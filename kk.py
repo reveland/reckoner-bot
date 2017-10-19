@@ -47,9 +47,9 @@ def handle_message(p):
     elif p[0] == 'add_product':
         return add_product(p[1], {'P':int(p[2]), 'G':int(p[3]), 'E':int(p[4]), 'A':int(p[5])})
     elif p[0] == 'get_products':
-        return products
+        return str(products)
     elif p[0] == 'get_residents':
-        return residents
+        return str(residents)
     else:
         return 'What? Want some candy?'
 
