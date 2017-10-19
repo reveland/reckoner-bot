@@ -12,7 +12,8 @@ def add_to_dept(name, value):
     residents.loc[residents['name'] == name,'dept'] = get_dept(name) + value
 def def_facto_add_product(product_name, subcripers):
     global products
-    products = products.append(pd.Series([product_name, subcripers], index=['name', 'subcribers']), ignore_index=True)
+    products =  products.append({'name': product_name, 'subcribers': subcripers}, ignore_index=True)
+    
 def add_product(product_name, subcripers):
     """ product_name is the new product name
         subcripers is a dictionaries of elements like {'resident_name':usage_percent} """
@@ -72,12 +73,11 @@ print(handle_message('get_products'))
 print(handle_message('get_residents'))
 """
 
-"""
+
 print(handle_message('add_product elmex 50 0 50 0'))
 print(handle_message('add_record P elmex 800'))
 print(handle_message('get_products'))
 print(handle_message('get_residents'))
-"""
 
 """
 residents = pd.DataFrame(
