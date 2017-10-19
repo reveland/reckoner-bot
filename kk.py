@@ -3,12 +3,8 @@ import pandas as pd
 class KoKa(object):
 
     def __init__(self):
-        self.residents = pd.DataFrame(
-            [{'name': 'P', 'dept': 0},
-            {'name': 'G', 'dept': 0},
-            {'name': 'E', 'dept': 0},
-            {'name': 'A', 'dept': 0}])
-        self.products = pd.DataFrame(columns=['name', 'subcribers'])
+        self.products = pd.read_json('products.json')
+        self.residents = pd.read_json('residents.json')
 
     def get_subcribers(self, name):
         if name not in set(self.products['name']):
@@ -70,11 +66,17 @@ class KoKa(object):
                 {'name': 'E', 'dept': 0},
                 {'name': 'A', 'dept': 0}])
             return "reset done"
+        elif m[0] == 'get_products_json':
+            return str(self.products.to_json())
+        elif m[0] == 'get_residents_json':
+            return str(self.residents.to_json())
         else:
             return 'What? Want some candy?'
 
     def handle_messages(self, ms):
         try:
+            self.products = pd.read_json('products.json')
+            self.residents = pd.read_json('residents.json')
             ms = ms.split('\n')
             if len(ms) == 1:
                 return self.handle_message(ms[0])
@@ -82,9 +84,23 @@ class KoKa(object):
                 for m in ms:
                     self.handle_message(m)
                 return 'all_done'
+            self.residents.to_json('residents.json')
+            self.products.to_json('products.json')
         except Exception as e:
             print(e)
             return 'Something terrible happend.'
+
+"""
+residents = pd.DataFrame(
+    [{'name': 'P', 'dept': 0},
+    {'name': 'G', 'dept': 0},
+    {'name': 'E', 'dept': 0},
+    {'name': 'A', 'dept': 0}])
+products = pd.DataFrame(columns=['name', 'subcribers'])
+
+residents.to_json('residents.json')
+products.to_json('products.json')
+"""
 
 KK = KoKa()
 print(KK.handle_message('add_product elmex 50 0 50 0'))
