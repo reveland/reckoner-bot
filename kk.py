@@ -58,6 +58,16 @@ def handle_message(p):
             return str(products)
         elif p[0] == 'get_residents':
             return str(residents)
+        elif p[0] == 'reset_products':
+            products = pd.DataFrame(columns=['name', 'subcribers'])
+            return "reset done"
+        elif p[0] == 'reset_residents':
+            residents = pd.DataFrame(
+                [{'name': 'P', 'dept': 0},
+                {'name': 'G', 'dept': 0},
+                {'name': 'E', 'dept': 0},
+                {'name': 'A', 'dept': 0}])
+            return "reset done"
         else:
             return 'What? Want some candy?'
     except Exception as e:
