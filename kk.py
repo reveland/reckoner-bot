@@ -50,21 +50,21 @@ class KK(object):
         self.add_to_dept(buyer, -value)
         return buyer + ' paid for ' + product_name + ' in value of ' + str(value)
 
-    def handle_message(self, p):
-        p = p.split(' ')
+    def handle_message(self, m):
         try:
-            if p[0] == 'add_record':
-                return self.add_record(p[1], p[2], float(p[3]))
-            elif p[0] == 'add_product':
-                return self.add_product(p[1], {'P':float(p[2]), 'G':float(p[3]), 'E':float(p[4]), 'A':float(p[5])})
-            elif p[0] == 'get_self.products':
+            m = m.split(' ')
+            if m[0] == 'add_record':
+                return self.add_record(m[1], m[2], float(m[3]))
+            elif m[0] == 'add_product':
+                return self.add_product(m[1], {'P':float(m[2]), 'G':float(m[3]), 'E':float(m[4]), 'A':float(m[5])})
+            elif m[0] == 'get_self.products':
                 return str(self.products)
-            elif p[0] == 'get_self.residents':
+            elif m[0] == 'get_self.residents':
                 return str(self.residents)
-            elif p[0] == 'reset_self.products':
+            elif m[0] == 'reset_self.products':
                 self.products = pd.DataFrame(columns=['name', 'subcribers'])
                 return "reset done"
-            elif p[0] == 'reset_self.residents':
+            elif m[0] == 'reset_self.residents':
                 self.residents = pd.DataFrame(
                     [{'name': 'P', 'dept': 0},
                     {'name': 'G', 'dept': 0},
@@ -76,6 +76,15 @@ class KK(object):
         except Exception as e:
             print(e)
             return 'Something terrible happend.'
+    
+    def handle_messages(self, ms):
+        ms = ms.split('\n')
+        if len(ms) == 1:
+            return self.handle_message(ms[0])
+        else:
+            for m in ms:
+                self.handle_message(m)
+            return 'all_done'
 
 KK = KK()
 print(KK.handle_message('add_product elmex 50 0 50 0'))
