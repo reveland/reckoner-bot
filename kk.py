@@ -44,12 +44,14 @@ def handle_message(p):
     p = p.split(' ')
     if p[0] == 'add_record':
         return add_record(p[1], p[2], int(p[3]))
-    if p[0] == 'add_product':
+    elif p[0] == 'add_product':
         return add_product(p[1], {'P':int(p[2]), 'G':int(p[3]), 'E':int(p[4]), 'A':int(p[5])})
-    if p[0] == 'get_products':
+    elif p[0] == 'get_products':
         return products
-    if p[0] == 'get_residents':
+    elif p[0] == 'get_residents':
         return residents
+    else:
+        return 'What? Want some candy?'
 
 residents = pd.DataFrame(
     [{'name': 'P', 'dept': 0},
