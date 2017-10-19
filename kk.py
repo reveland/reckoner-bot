@@ -7,17 +7,22 @@ class KoKa(object):
         self.residents = pd.read_json('residents.json')
 
     def get_subcribers(self, name):
+        self.products = pd.read_json('products.json')
         if name not in set(self.products['name']):
             print('Failed: not existing product: ' + name)
             return list() # TODO not been tested!
         else:
             return list(self.products.loc[self.products['name'] == name,'subcribers'])[0]
     def get_dept(self, name):
+        self.residents = pd.read_json('residents.json')
         return self.residents.loc[self.residents['name'] == name,'dept']
     def add_to_dept(self, name, value):
+        self.residents = pd.read_json('residents.json')
         self.residents.loc[self.residents['name'] == name,'dept'] = self.get_dept(name) + value
+        self.residents.to_json('residents.json')
     def def_facto_add_product(self, product_name, subcripers):
-        self.products =  self.products.append({'name': product_name, 'subcribers': subcripers}, ignore_index=True)
+        self.products = self.products.append({'name': product_name, 'subcribers': subcripers}, ignore_index=True)
+        self.products.to_json('products.json')
     
     def add_product(self, product_name, subcripers):
         """ product_name is the new product name
@@ -58,6 +63,7 @@ class KoKa(object):
             return str(self.residents)
         elif m[0] == 'reset_products':
             self.products = pd.DataFrame(columns=['name', 'subcribers'])
+            self.products.to_json('products.json')
             return "reset done"
         elif m[0] == 'reset_residents':
             self.residents = pd.DataFrame(
@@ -65,18 +71,19 @@ class KoKa(object):
                 {'name': 'G', 'dept': 0},
                 {'name': 'E', 'dept': 0},
                 {'name': 'A', 'dept': 0}])
+            self.residents.to_json('residents.json')
             return "reset done"
         elif m[0] == 'get_products_json':
+            self.products = pd.read_json('products.json')
             return str(self.products.to_json())
         elif m[0] == 'get_residents_json':
+            self.residents = pd.read_json('residents.json')
             return str(self.residents.to_json())
         else:
             return 'What? Want some candy?'
 
     def handle_messages(self, ms):
         try:
-            self.products = pd.read_json('products.json')
-            self.residents = pd.read_json('residents.json')
             ms = ms.split('\n')
             if len(ms) == 1:
                 return self.handle_message(ms[0])
@@ -84,12 +91,9 @@ class KoKa(object):
                 for m in ms:
                     self.handle_message(m)
                 return 'all_done'
-            self.residents.to_json('residents.json')
-            self.products.to_json('products.json')
         except Exception as e:
             print(e)
             return 'Something terrible happend.'
-
 """
 residents = pd.DataFrame(
     [{'name': 'P', 'dept': 0},
@@ -100,13 +104,14 @@ products = pd.DataFrame(columns=['name', 'subcribers'])
 
 residents.to_json('residents.json')
 products.to_json('products.json')
-"""
+
 
 KK = KoKa()
-print(KK.handle_message('add_product elmex 50 0 50 0'))
-print(KK.handle_message('add_record P elmex 800'))
-print(KK.handle_message('get_products'))
-print(KK.handle_message('get_residents'))
+print(KK.handle_messages('add_product elmex 50 0 50 0'))
+print(KK.handle_messages('add_record P elmex 800'))
+print(KK.handle_messages('get_products'))
+print(KK.handle_messages('get_residents'))
+"""
 
 """
 self.residents = pd.DataFrame(
