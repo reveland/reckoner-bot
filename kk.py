@@ -56,14 +56,14 @@ class KoKa(object):
             return self.add_record(m[1], m[2], float(m[3]))
         elif m[0] == 'add_product':
             return self.add_product(m[1], {'P':float(m[2]), 'G':float(m[3]), 'E':float(m[4]), 'A':float(m[5])})
-        elif m[0] == 'get_self.products':
+        elif m[0] == 'get_products':
             return str(self.products)
-        elif m[0] == 'get_self.residents':
+        elif m[0] == 'get_residents':
             return str(self.residents)
-        elif m[0] == 'reset_self.products':
+        elif m[0] == 'reset_products':
             self.products = pd.DataFrame(columns=['name', 'subcribers'])
             return "reset done"
-        elif m[0] == 'reset_self.residents':
+        elif m[0] == 'reset_residents':
             self.residents = pd.DataFrame(
                 [{'name': 'P', 'dept': 0},
                 {'name': 'G', 'dept': 0},
@@ -85,13 +85,13 @@ class KoKa(object):
         except Exception as e:
             print(e)
             return 'Something terrible happend.'
-"""
-KK = KK()
+
+KK = KoKa()
 print(KK.handle_message('add_product elmex 50 0 50 0'))
 print(KK.handle_message('add_record P elmex 800'))
-print(KK.handle_message('get_self.products'))
-print(KK.handle_message('get_self.residents'))
-"""
+print(KK.handle_message('get_products'))
+print(KK.handle_message('get_residents'))
+
 """
 self.residents = pd.DataFrame(
     [{'name': 'P', 'dept': 0},
