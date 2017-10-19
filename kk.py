@@ -58,8 +58,10 @@ class KoKa(object):
         elif m[0] == 'add_product':
             return self.add_product(m[1], {'P':float(m[2]), 'G':float(m[3]), 'E':float(m[4]), 'A':float(m[5])})
         elif m[0] == 'get_products':
+            self.products = pd.read_json('products.json')
             return str(self.products)
         elif m[0] == 'get_residents':
+            self.residents = pd.read_json('residents.json')
             return str(self.residents)
         elif m[0] == 'reset_products':
             self.products = pd.DataFrame(columns=['name', 'subcribers'])
@@ -104,8 +106,8 @@ products = pd.DataFrame(columns=['name', 'subcribers'])
 
 residents.to_json('residents.json')
 products.to_json('products.json')
-
-
+"""
+"""
 KK = KoKa()
 print(KK.handle_messages('add_product elmex 50 0 50 0'))
 print(KK.handle_messages('add_record P elmex 800'))
