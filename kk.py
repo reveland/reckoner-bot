@@ -1,20 +1,24 @@
 import pandas as pd
 
 def get_subcribers(name):
+    global products
     if name not in set(products['name']):
         print('Failed: not existing product: ' + name)
         return list() # TODO not been tested!
     else:
         return list(products.loc[products['name'] == name,'subcribers'])[0]
 def get_dept(name):
+    global residents
     return residents.loc[residents['name'] == name,'dept']
 def add_to_dept(name, value):
+    global residents
     residents.loc[residents['name'] == name,'dept'] = get_dept(name) + value
 def def_facto_add_product(product_name, subcripers):
     global products
     products =  products.append({'name': product_name, 'subcribers': subcripers}, ignore_index=True)
     
 def add_product(product_name, subcripers):
+    global products
     """ product_name is the new product name
         subcripers is a dictionaries of elements like {'resident_name':usage_percent} """
     if sum(subcripers.values()) != 100:
@@ -42,6 +46,8 @@ def add_record(buyer, product_name, value):
     return buyer + ' paid for ' + product_name + ' in value of ' + str(value)
 
 def handle_message(p):
+    global residents
+    global products
     p = p.split(' ')
     try:
         if p[0] == 'add_record':
