@@ -86,6 +86,8 @@ class KoKa(object):
 
     def handle_messages(self, ms):
         try:
+            if 'yes' in ms.lower() or 'candy' in ms.lower():
+                return'I see.. Well, then see into the green bowl under the black hat..\nUsage:\nget_products\nget_residents\nadd_product(name, p%, g%, e%, a%)\nadd_record(name product value)'
             ms = ms.split('\n')
             if len(ms) == 1:
                 return self.handle_message(ms[0])
