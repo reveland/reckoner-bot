@@ -3,6 +3,8 @@ import sys
 import json
 from datetime import datetime
 from kk import KoKa
+from threading import Timer
+import urllib.request
 
 import requests
 from flask import Flask, request
@@ -89,6 +91,10 @@ def log(msg, *args, **kwargs):  # simple wrapper for logging to stdout on heroku
         pass  # squash logging errors in case of non-ascii text
     sys.stdout.flush()
 
+def ping_fb_reckoner():
+    print(urllib.request.urlopen("https://limitless-stream-25117.herokuapp.com/").read())
+    Timer(30, ping_fb_reckoner).start()
 
 if __name__ == '__main__':
+    Timer(30, ping_fb_reckoner).start()
     app.run(debug=True)
