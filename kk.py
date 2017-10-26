@@ -98,6 +98,9 @@ class KoKa(object):
         except Exception as e:
             print(e)
             return 'Something terrible happend.'
+
+
+
 """
 residents = pd.DataFrame(
     [{'name': 'P', 'dept': 0},

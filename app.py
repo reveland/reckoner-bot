@@ -2,7 +2,7 @@ import os
 import sys
 import json
 from datetime import datetime
-from kk import KoKa
+from trello_kk import KoKa
 from threading import Timer
 import urllib2
 
