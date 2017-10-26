@@ -111,7 +111,12 @@ class KoKa(object):
 
     def handle_messages(self, ms):
             if 'yes' in ms.lower() or 'candy' in ms.lower():
-                return'I see.. Well, then see into the green bowl under the black hat..\nUsage:\nget_products\nget_residents\nadd_product(name, p%, g%, e%, a%)\nadd_record(name product value)'
+                return ('I see.. Well, then see into the green bowl under the black hat..\n'
+            +'Usage:\n'
+            +'get_products\n'
+            +'get_residents\n'
+            +'add_product name p% g% e% a%\n'
+            +'add_record buyer_name product_name value')
             ms = ms.split('\n')
             if len(ms) == 1:
                 return self.handle_message(ms[0])
@@ -120,5 +125,6 @@ class KoKa(object):
                     self.handle_message(m)
                 return 'all_done'
 
+
 KK = KoKa()
-print(KK.handle_messages('get_residents'))
+print(KK.handle_messages('candy'))
