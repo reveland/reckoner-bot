@@ -88,6 +88,9 @@ class KoKa(object):
         records_list = self.split_them(records)
         for r in records_list:
             residents = self.add_record(r[1], r[2], float(r[3]), residents, products)
+        cards = board.get_cards()
+        for i in range(len(residents)):
+            cards[i].set_name(residents['name'][i] + ' ' + str(residents['dept'][i]))
         return residents
         
     def handle_message(self, m):
@@ -127,4 +130,4 @@ class KoKa(object):
 
 
 KK = KoKa()
-print(KK.handle_messages('candy'))
+print(KK.handle_messages('get_residents'))
