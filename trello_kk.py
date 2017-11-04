@@ -1,5 +1,11 @@
 import pandas as pd
 from trello import TrelloClient
+from reckoner import RentReckoner
+from rent_provider_trello import DataProvider
+
+DATA_PATH = ""
+DATA_PROVIDER = DataProvider(DATA_PATH)
+RENT_RECKONER = RentReckoner(DATA_PROVIDER)
 
 class KoKa(object):
 
@@ -92,6 +98,10 @@ class KoKa(object):
         for i in range(len(residents)):
             cards[i].set_name(residents['name'][i] + ' ' + str(residents['dept'][i]))
         return residents
+
+    def add_bill(self, start, end, type, amount):
+        DATA_PROVIDER.add_bill(start, end, type, amount)
+        return 'bill added -> start:{}, end:{}, type: {}, amount: {}'.format(start, end, type, amount)
         
     def handle_message(self, m):
         m = m.split(' ')
@@ -109,6 +119,10 @@ class KoKa(object):
             return str(self.get_products(board).to_json())
         elif m[0] == 'get_residents_json':
             return str(self.get_residents().to_json())
+        elif m[0] == 'add_bill':
+            return str(self.add_bill(m[1], m[2], m[3], float(m[4])))
+        elif m[0] == 'update_depts':
+            return str(RENT_RECKONER.update_debts(0))
         else:
             return 'What? Want some candy?'
 
@@ -127,3 +141,6 @@ class KoKa(object):
                 for m in ms:
                     self.handle_message(m)
                 return 'all_done'
+
+KK = KoKa()
+print(KK.handle_message('update_depts'))

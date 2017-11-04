@@ -203,3 +203,4 @@ class RentReckoner(object):
             resident["end"] = self.to_iso8601(resident["end"])
 
         self.data_provider.save_residents(habitant_id, residents_copy)
+        return residents_copy

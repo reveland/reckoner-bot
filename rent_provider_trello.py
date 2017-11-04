@@ -40,6 +40,9 @@ class DataProvider(object):
             print(row)
             cards[i].set_name(' '.join([row['start'], row['end'], row['name'], str(row['dept']), str(row['paid'])]))
 
+    def add_bill(self, start, end, type, amount):
+        self.board.open_lists()[4].add_card(start + ' ' + end + ' ' + type + ' ' + str(amount))
+
     def __transform_date_to_int(self, items):
         for item in items:
             item["end"] = calendar.timegm(parse(item["end"]).timetuple())
