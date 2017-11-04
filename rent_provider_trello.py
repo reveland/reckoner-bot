@@ -35,8 +35,10 @@ class DataProvider(object):
 
     def save_residents(self, habitant_id, residents):
         cards = self.board.open_lists()[3].list_cards()
-        for i, row in residents.iterrows():
-            cards[i].set_name(' '.join([row['start'], row['end'], row['type'], str(row['amount'])]))
+        for i in range(len(residents)):
+            row = residents[i]
+            print(row)
+            cards[i].set_name(' '.join([row['start'], row['end'], row['name'], str(row['dept']), str(row['paid'])]))
 
     def __transform_date_to_int(self, items):
         for item in items:
