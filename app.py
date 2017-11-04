@@ -85,9 +85,7 @@ def get_bills(habitant_id):
 @app.route("/habitations/<int:habitant_id>/update_depts")
 def update_depts(habitant_id):
     RENT_RECKONER.update_debts(habitant_id)
-    resp = flask.Response(habitant_id)
-    resp.headers['Access-Control-Allow-Origin'] = '*'
-    return resp
+    return "updated"
 
 def send_message(recipient_id, message_text):
 

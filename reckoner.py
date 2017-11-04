@@ -6,29 +6,27 @@ class RentReckoner(object):
 
     def __init__(self, data_provider):
         self.data_provider = data_provider
-        self.residents = self.data_provider.get_residents(0)
-        self.bills = self.data_provider.get_bills(0)
 
-    def get_debt(self, habitant_id, resident):
+    def get_debt(self, habitant_id, resident, residents, bills):
         sum_cost_per_skull = self.sum_cost_per_skull(
-            habitant_id, resident["start"], resident["end"])
+            habitant_id, resident["start"], resident["end"], residents, bills)
         sum_cost_per_skull = int(sum_cost_per_skull)
         paid = int(resident["paid"])
         return sum_cost_per_skull - paid
 
-    def sum_cost(self, habitant_id, start, end):
-        return sum(list(map(lambda bill: bill["amount"] * self.get_time_coverage_percent(bill, start, end), self.bills)))
+    def sum_cost(self, habitant_id, start, end, residents, bills):
+        return sum(list(map(lambda bill: bill["amount"] * self.get_time_coverage_percent(bill, start, end), bills)))
 
-    def sum_cost_per_skull(self, habitant_id, start, end):
-        return sum([self.get_cost_per_skull(habitant_id, date) for date in np.arange(start, end, step=86400, dtype=np.int64)])
+    def sum_cost_per_skull(self, habitant_id, start, end, residents, bills):
+        return sum([self.get_cost_per_skull(habitant_id, date, residents, bills) for date in np.arange(start, end, step=86400, dtype=np.int64)])
 
-    def get_cost_per_skull(self, habitant_id, date):
-        count = self.get_dweller_count(habitant_id, date)
+    def get_cost_per_skull(self, habitant_id, date, residents, bills):
+        count = self.get_dweller_count(habitant_id, date, residents)
         return sum(list(map(lambda bill: (bill["amount"] * self.get_time_coverage_percent(bill, date, date + 86400)
-                                          / count), self.bills)))
+                                          / count), bills)))
 
-    def get_dweller_count(self, habitant_id, date):
-        return sum(map(lambda resident: 1 if self.is_dwell(resident, date) else 0, self.residents))
+    def get_dweller_count(self, habitant_id, date, residents):
+        return sum(map(lambda resident: 1 if self.is_dwell(resident, date) else 0, residents))
 
     def is_dwell(self, resident, date):
         print(date, resident["start"], resident["end"], resident)
@@ -187,11 +185,11 @@ class RentReckoner(object):
 
     def update_debts(self, habitant_id):
         residents_copy = self.data_provider.get_residents(habitant_id)
-        self.residents = self.data_provider.get_residents(habitant_id)
-        self.bills = self.data_provider.get_bills(habitant_id)
-
+        residents = self.data_provider.get_residents(habitant_id)
+        bills = self.data_provider.get_bills(habitant_id)
+        
         for resident in residents_copy:
-            resident["dept"] = self.get_debt(habitant_id, resident)
+            resident["dept"] = self.get_debt(habitant_id, resident, residents, bills)
             resident["start"] = self.to_iso8601(resident["start"])
             resident["end"] = self.to_iso8601(resident["end"])
 
