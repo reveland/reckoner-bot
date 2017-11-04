@@ -5,7 +5,10 @@ from datetime import datetime
 from trello_kk import KoKa
 from threading import Timer
 import urllib2
+from reckoner import RentReckoner
+from rent_provider_trello import DataProvider
 
+import flask
 import requests
 from flask import Flask, request
 
@@ -58,6 +61,21 @@ def webhook():
 
     return "ok", 200
 
+@APP.route("/habitations/<int:habitant_id>/residents/<int:resident_id>/dept")
+def get_dept(habitant_id, resident_id):
+    dept = "# %d #" % RENT_RECKONER.get_debt(
+        habitant_id, DATA_PROVIDER.get_resident_by_id(habitant_id, resident_id))
+    resp = flask.Response(dept)
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
+
+@APP.route("/habitations/<int:habitant_id>/bills")
+def get_bills(habitant_id):
+    bills = json.dumps(RENT_RECKONER.get_bills_to_ui(
+        habitant_id), default=lambda o: o.__dict__)
+    resp = flask.Response(bills)
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 def send_message(recipient_id, message_text):
 
