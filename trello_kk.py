@@ -127,7 +127,3 @@ class KoKa(object):
                 for m in ms:
                     self.handle_message(m)
                 return 'all_done'
-
-
-KK = KoKa()
-print(KK.handle_messages('get_residents'))

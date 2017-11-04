@@ -23,10 +23,6 @@ class RentReckoner(object):
 
     def get_cost_for_a_day(self, bill, date, count):
         percent = self.get_time_coverage_percent(bill, date, date + 86400)
-        if percent != 0:
-            print(bill["amount"])
-            print(percent)
-            print(count)
         return bill["amount"] * percent / count
 
     def get_cost_per_skull(self, habitant_id, date, residents, bills):
@@ -42,6 +38,10 @@ class RentReckoner(object):
         return is_dwell
 
     def get_time_coverage_percent(self, bill, start, end):
+        bill['end'] = float(bill['end'])
+        bill['start'] = float(bill['start'])
+        start = float(start)
+        end = float(end)
         whole_interval = bill["end"] - bill["start"]
         start_interval = start - bill["start"]
         end_interval = bill["end"] - end
