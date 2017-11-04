@@ -32,7 +32,9 @@ class RentReckoner(object):
         return sum(map(lambda resident: 1 if self.is_dwell(resident, date) else 0, residents))
 
     def is_dwell(self, resident, date):
-        return True if resident["start"] <= date <= resident["end"] else False
+        is_dwell = True if resident["start"] <= date <= resident["end"] else False
+        print(is_dwell)
+        return is_dwell
 
     def get_time_coverage_percent(self, bill, start, end):
         whole_interval = bill["end"] - bill["start"]
