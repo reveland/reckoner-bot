@@ -12,6 +12,11 @@ import flask
 import requests
 from flask import Flask, request
 
+
+DATA_PATH = ""
+DATA_PROVIDER = DataProvider(DATA_PATH)
+RENT_RECKONER = RentReckoner(DATA_PROVIDER)
+
 app = Flask(__name__)
 
 KK = KoKa()
