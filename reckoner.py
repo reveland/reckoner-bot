@@ -3,7 +3,6 @@ import datetime
 
 class RentReckoner(object):
 
-
     def __init__(self, data_provider):
         self.data_provider = data_provider
 
@@ -14,7 +13,8 @@ class RentReckoner(object):
         paid = int(resident["paid"])
         return sum_cost_per_skull - paid
 
-    def sum_cost(self, habitant_id, start, end, residents, bills):
+    def sum_cost(self, habitant_id, start, end, bills):
+        print(sum(list(map(lambda bill: bill["amount"] * self.get_time_coverage_percent(bill, start, end), bills))))
         return sum(list(map(lambda bill: bill["amount"] * self.get_time_coverage_percent(bill, start, end), bills)))
 
     def sum_cost_per_skull(self, habitant_id, start, end, residents, bills):
@@ -22,10 +22,13 @@ class RentReckoner(object):
 
     def get_cost_per_skull(self, habitant_id, date, residents, bills):
         count = self.get_dweller_count(habitant_id, date, residents)
+        print(sum(list(map(lambda bill: (bill["amount"] * self.get_time_coverage_percent(bill, date, date + 86400)
+                                          / count), bills))))
         return sum(list(map(lambda bill: (bill["amount"] * self.get_time_coverage_percent(bill, date, date + 86400)
                                           / count), bills)))
 
     def get_dweller_count(self, habitant_id, date, residents):
+        print(sum(map(lambda resident: 1 if self.is_dwell(resident, date) else 0, residents)))
         return sum(map(lambda resident: 1 if self.is_dwell(resident, date) else 0, residents))
 
     def is_dwell(self, resident, date):

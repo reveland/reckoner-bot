@@ -55,4 +55,4 @@ class DataProvider(object):
         return list(map(lambda r: dict(zip(keys, r)), l))
 
     def __split_them(self, l):
-        return list(map(lambda r: str(r).replace('<', '').replace('>', '').split(' ')[1:], l))    
+        return list(map(lambda r: str(r).replace('<', '').replace('>', '').split(' ')[1:], l))
