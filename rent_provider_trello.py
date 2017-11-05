@@ -37,7 +37,6 @@ class DataProvider(object):
         cards = self.board.open_lists()[3].list_cards()
         for i in range(len(residents)):
             row = residents[i]
-            print(row)
             cards[i].set_name(' '.join([row['start'], row['end'], row['name'], str(row['dept']), str(row['paid'])]))
 
     def add_bill(self, start, end, type, amount):

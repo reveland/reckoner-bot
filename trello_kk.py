@@ -103,6 +103,10 @@ class KoKa(object):
         DATA_PROVIDER.add_bill(start, end, type, amount)
         return 'bill added -> start:{}, end:{}, type: {}, amount: {}'.format(start, end, type, amount)
         
+    def update_depts(self, habitant_id):
+        residents = RENT_RECKONER.update_debts(habitant_id)
+        return 'dept updated -> {}'.format(list(map(lambda r: 'name: {} - dept: {}\n'.format(r['name'], r['dept']), residents)))
+
     def handle_message(self, m):
         m = m.split(' ')
         if m[0] == 'add_record':
@@ -122,7 +126,7 @@ class KoKa(object):
         elif m[0] == 'add_bill':
             return str(self.add_bill(m[1], m[2], m[3], float(m[4])))
         elif m[0] == 'update_depts':
-            return str(RENT_RECKONER.update_debts(0))
+            return str(self.update_depts(0))
         else:
             return 'What? Want some candy?'
 
@@ -141,3 +145,6 @@ class KoKa(object):
                 for m in ms:
                     self.handle_message(m)
                 return 'all_done'
+
+KK = KoKa()
+print(KK.handle_message('update_depts'))

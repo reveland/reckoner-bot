@@ -53,7 +53,9 @@ def webhook():
                     else:
                         message_text = 'get_residents'
                     
-                    send_message(sender_id, KK.handle_messages(message_text))
+                    message_text_out = KK.handle_messages(message_text)
+                    print(message_text_out)
+                    send_message(sender_id, message_text_out)
 
                 if messaging_event.get("delivery"):  # delivery confirmation
                     pass
