@@ -2,24 +2,23 @@ import os
 import sys
 import json
 from datetime import datetime
-from trello_kk import KoKa
 from threading import Timer
 import urllib2
-from reckoner import RentReckoner
-from rent_provider_trello import DataProvider
-
 import flask
 import requests
 from flask import Flask, request
 
+from reckoner.trello_kk import KoKa
+from reckoner.reckoner import RentReckoner
+from reckoner.rent_provider_trello import DataProvider
 
 DATA_PATH = ""
 DATA_PROVIDER = DataProvider(DATA_PATH)
 RENT_RECKONER = RentReckoner(DATA_PROVIDER)
 
-app = Flask(__name__)
-
 KK = KoKa()
+
+app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
 def verify():
@@ -126,10 +125,5 @@ def log(msg, *args, **kwargs):  # simple wrapper for logging to stdout on heroku
         pass  # squash logging errors in case of non-ascii text
     sys.stdout.flush()
 
-def ping_fb_reckoner():
-    print(urllib2.urlopen("https://limitless-stream-25117.herokuapp.com/").read())
-    Timer(30, ping_fb_reckoner).start()
-
 if __name__ == '__main__':
-    Timer(30, ping_fb_reckoner).start()
     app.run(debug=True)
