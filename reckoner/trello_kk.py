@@ -58,13 +58,25 @@ class KoKa(object):
 
     def add_record_to_trello(self, buyer, product_name, value):
         board = self.client.get_board('f0EDhQy7')
-        board.open_lists()[2].add_card(buyer + ' ' + product_name + ' ' + str(value))
+        board.open_lists()[2].add_card(buyer + ' ' + product_name + ' ' + str(int(float(value))))
         return buyer + ' paid for ' + product_name + ' in value of ' + str(value)
 
-    def add_product_to_trello(self, product_name, p=0, g=0, e=0, a=0):
+    # def add_product_to_trello(self, product_name, p=0, g=0, e=0, a=0):
+    #     board = self.client.get_board('f0EDhQy7')
+    #     board.open_lists()[1].add_card(product_name + ' ' + str(p) + ' ' + str(g) + ' ' + str(e) + ' ' + str(a))
+    #     return product_name + ': P:' + str(p) + '%, G:' + str(g) + '%, E:' + str(e) + '%, A:' + str(a) + '% added'
+
+    def add_product_to_trello(self, product_name, m):
+        subscribers = dict(map(lambda s: s.split('='), m))
+        subscribers = dict(map(lambda k: [k, int(subscribers[k])], subscribers.keys()))
+        if sum(subscribers.values()) != 100:
+            error = 'Failed: sum of percents should be 100, but was: ' + str(sum(subscribers.values()))
+            print(error)
+            return error
         board = self.client.get_board('f0EDhQy7')
-        board.open_lists()[1].add_card(product_name + ' ' + str(p) + ' ' + str(g) + ' ' + str(e) + ' ' + str(a))
-        return product_name + ': P:' + str(p) + '%, G:' + str(g) + '%, E:' + str(e) + '%, A:' + str(a) + '% added'
+        product = product_name + ' ' + ' '.join(list(map(lambda k: '%s=%s'%(k, subscribers[k]), subscribers)))
+        board.open_lists()[1].add_card(product)
+        return product + ' added'
 
     def split_them(self, l):
         return list(map(lambda r: str(r).replace('<', '').replace('>', '').split(' '), l))
@@ -74,22 +86,31 @@ class KoKa(object):
         residents.index = residents.index + 1
         return residents
 
+    # def get_products(self, board):
+    #     products_list = board.open_lists()[1].list_cards()
+    #     products_list = self.split_them(products_list)
+    #     products = pd.DataFrame(columns=['name', 'subscribers'])
+    #     for m in products_list:
+    #         products = self.add_product(m[1], {'P':float(m[2]), 'G':float(m[3]), 'E':float(m[4]), 'A':float(m[5])}, products)
+    #     return products
+
     def get_products(self, board):
-        products_list = board.open_lists()[1].list_cards()
-        products_list = self.split_them(products_list)
+        raw_products = board.open_lists()[1].list_cards()
+        products_splitted = self.split_them(raw_products)
         products = pd.DataFrame(columns=['name', 'subscribers'])
-        for m in products_list:
-            products = self.add_product(m[1], {'P':float(m[2]), 'G':float(m[3]), 'E':float(m[4]), 'A':float(m[5])}, products)
+        for m in products_splitted:
+            subscribers = dict(map(lambda s: s.split('='), m[2:]))
+            subscribers = dict(map(lambda k: [k, float(subscribers[k])], subscribers.keys()))
+            products = self.add_product(m[1], subscribers, products)
         return products
 
     def get_residents(self):
         board = self.client.get_board('f0EDhQy7')
         products = self.get_products(board)
-        residents = pd.DataFrame(
-            [{'name': 'P', 'dept': 0},
-            {'name': 'G', 'dept': 0},
-            {'name': 'E', 'dept': 0},
-            {'name': 'A', 'dept': 0}])
+        raw_residents = board.open_lists()[0].list_cards()
+        residents_splitted = self.split_them(raw_residents)
+        residents_clean = list(map(lambda r: [r[1], 0], residents_splitted))
+        residents = pd.DataFrame(residents_clean, columns=['name', 'dept'])
         records = board.open_lists()[2].list_cards()
         records_list = self.split_them(records)
         for r in records_list:
@@ -112,7 +133,7 @@ class KoKa(object):
         if m[0] == 'add_record':
             return self.add_record_to_trello(m[1], m[2], float(m[3]))
         elif m[0] == 'add_product':
-            return self.add_product_to_trello(m[1], m[2], m[3], m[4], m[5])
+            return self.add_product_to_trello(m[1], m[2:])
         elif m[0] == 'get_products':
             board = self.client.get_board('f0EDhQy7')
             return str(self.get_products(board))

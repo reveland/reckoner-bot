@@ -37,10 +37,10 @@ class DataProvider(object):
         cards = self.board.open_lists()[3].list_cards()
         for i in range(len(residents)):
             row = residents[i]
-            cards[i].set_name(' '.join([row['start'], row['end'], row['name'], str(row['dept']), str(row['paid'])]))
+            cards[i].set_name(' '.join([row['start'][:10], row['end'][:10], row['name'], str(row['dept']), str(int(float(row['paid'])))]))
 
     def add_bill(self, start, end, type, amount):
-        self.board.open_lists()[4].add_card(start + ' ' + end + ' ' + type + ' ' + str(amount))
+        self.board.open_lists()[4].add_card(start[:10] + ' ' + end[:10] + ' ' + type + ' ' + str(amount))
 
     def __transform_date_to_int(self, items):
         for item in items:
