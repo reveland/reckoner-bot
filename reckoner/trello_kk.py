@@ -96,7 +96,7 @@ class KoKa(object):
 
     def get_residents(self):
         board = self.client.get_board('f0EDhQy7')
-        products = self.get_products(board)
+        products = self.get_products()
         raw_residents = board.open_lists()[0].list_cards()
         residents_splitted = self.split_them(raw_residents)
         residents_clean = list(map(lambda r: [r[1], 0], residents_splitted))
@@ -135,8 +135,7 @@ class KoKa(object):
             return str(self.update_depts(0))
 
         elif m[0] == 'get_products_json':
-            board = self.client.get_board('f0EDhQy7')
-            return str(self.get_products(board).to_json())
+            return str(self.get_products().to_json())
         elif m[0] == 'get_residents_json':
             return str(self.get_residents().to_json())
         else:
