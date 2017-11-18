@@ -119,27 +119,31 @@ class KoKa(object):
         return '\n'.join(list(map(lambda r: r['name'] + '\'s debt is ' + str(r['dept']), residents)))
 
     def handle_message(self, m):
-        m = m.split(' ')
-        if m[0] == 'add_record':
-            return self.add_record_to_trello(m[1], m[2], float(m[3]))
-        elif m[0] == 'add_product':
-            return self.add_product_to_trello(m[1], m[2:])
-        elif m[0] == 'get_products':
-            products = self.get_products()
-            return ' '.join(products.apply(lambda r: r['name'], axis=1))
-        elif m[0] == 'get_buyers':
-            return str(self.get_residents())
-        elif m[0] == 'add_bill':
-            return str(self.add_bill(m[1], m[2], m[3], float(m[4])))
-        elif m[0] == 'get_residents':
-            return str(self.update_depts(0))
+        try:
+            m = m.split(' ')
+            if m[0] == 'add_record':
+                return self.add_record_to_trello(m[1], m[2], float(m[3]))
+            elif m[0] == 'add_product':
+                return self.add_product_to_trello(m[1], m[2:])
+            elif m[0] == 'get_products':
+                products = self.get_products()
+                return ' '.join(products.apply(lambda r: r['name'], axis=1))
+            elif m[0] == 'get_buyers':
+                return str(self.get_residents())
+            elif m[0] == 'add_bill':
+                return str(self.add_bill(m[1], m[2], m[3], float(m[4])))
+            elif m[0] == 'get_residents':
+                return str(self.update_depts(0))
 
-        elif m[0] == 'get_products_json':
-            return str(self.get_products().to_json())
-        elif m[0] == 'get_residents_json':
-            return str(self.get_residents().to_json())
-        else:
-            return 'What? Want some candy?'
+            elif m[0] == 'get_products_json':
+                return str(self.get_products().to_json())
+            elif m[0] == 'get_residents_json':
+                return str(self.get_residents().to_json())
+            else:
+                return 'What? Want some candy?'
+        except:
+            e = sys.exc_info()[0]
+            return 'Something terrible happend. %s' % e
 
     def handle_messages(self, ms):
             if 'yes' in ms.lower() or 'candy' in ms.lower():
