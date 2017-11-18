@@ -36,13 +36,14 @@ class KoKa(object):
     
     def add_product(self, product_name, subcripers, products):
         if sum(subcripers.values()) != 100:
-            print('Failed: sum of percents should be 100, but was: ' + str(sum(subcripers.values())))
-            return 'Failed: sum of percents should be 100, but was: ' + str(sum(subcripers.values()))
+            error = 'Failed: sum of percents should be 100, but was: %d' % sum(subcripers.values())
+            print(error)
+            return error
         elif product_name in set(products['name']):
-            print('Failed: product already added ' + product_name)
-            return 'Failed: product already added ' + product_name
+            error = 'Failed: product already added: %s' % product_name
+            print(error)
+            return error
         else:
-            print('Product added: ' + product_name + ', subscribers: ' + str(subcripers))
             subcripers = {k: v/100 for k, v in subcripers.items()}
             return self.def_facto_add_product(product_name, subcripers, products)
 
@@ -58,13 +59,9 @@ class KoKa(object):
 
     def add_record_to_trello(self, buyer, product_name, value):
         board = self.client.get_board('f0EDhQy7')
-        board.open_lists()[2].add_card(buyer + ' ' + product_name + ' ' + str(int(float(value))))
-        return buyer + ' paid for ' + product_name + ' in value of ' + str(value)
-
-    # def add_product_to_trello(self, product_name, p=0, g=0, e=0, a=0):
-    #     board = self.client.get_board('f0EDhQy7')
-    #     board.open_lists()[1].add_card(product_name + ' ' + str(p) + ' ' + str(g) + ' ' + str(e) + ' ' + str(a))
-    #     return product_name + ': P:' + str(p) + '%, G:' + str(g) + '%, E:' + str(e) + '%, A:' + str(a) + '% added'
+        record = '%s %s %d' % (buyer, product_name, int(float(value)))
+        board.open_lists()[2].add_card(record)
+        return '%s added' % record
 
     def add_product_to_trello(self, product_name, m):
         subscribers = dict(map(lambda s: s.split('='), m))
@@ -86,15 +83,8 @@ class KoKa(object):
         residents.index = residents.index + 1
         return residents
 
-    # def get_products(self, board):
-    #     products_list = board.open_lists()[1].list_cards()
-    #     products_list = self.split_them(products_list)
-    #     products = pd.DataFrame(columns=['name', 'subscribers'])
-    #     for m in products_list:
-    #         products = self.add_product(m[1], {'P':float(m[2]), 'G':float(m[3]), 'E':float(m[4]), 'A':float(m[5])}, products)
-    #     return products
-
-    def get_products(self, board):
+    def get_products(self):
+        board = self.client.get_board('f0EDhQy7')
         raw_products = board.open_lists()[1].list_cards()
         products_splitted = self.split_them(raw_products)
         products = pd.DataFrame(columns=['name', 'subscribers'])
@@ -118,15 +108,15 @@ class KoKa(object):
         cards = board.get_cards()
         for i in range(len(residents)):
             cards[i].set_name(residents['name'][i] + ' ' + str(residents['dept'][i]))
-        return residents
+        return '\n'.join(residents.apply(lambda r: r['name'] + '\'s debt is ' + str(r['dept']), axis=1))
 
     def add_bill(self, start, end, type, amount):
         DATA_PROVIDER.add_bill(start, end, type, amount)
-        return 'bill added -> start:{}, end:{}, type: {}, amount: {}'.format(start, end, type, amount)
+        return 'bill added: start:%s, end:%s, type: %s, amount: %s' % (start, end, type, amount)
         
     def update_depts(self, habitant_id):
         residents = RENT_RECKONER.update_debts(habitant_id)
-        return 'dept updated -> {}'.format(list(map(lambda r: 'name: {} - dept: {}\n'.format(r['name'], r['dept']), residents)))
+        return '\n'.join(list(map(lambda r: r['name'] + '\'s debt is ' + str(r['dept']), residents)))
 
     def handle_message(self, m):
         m = m.split(' ')
@@ -135,19 +125,20 @@ class KoKa(object):
         elif m[0] == 'add_product':
             return self.add_product_to_trello(m[1], m[2:])
         elif m[0] == 'get_products':
-            board = self.client.get_board('f0EDhQy7')
-            return str(self.get_products(board))
-        elif m[0] == 'get_residents':
+            products = self.get_products()
+            return ' '.join(products.apply(lambda r: r['name'], axis=1))
+        elif m[0] == 'get_buyers':
             return str(self.get_residents())
+        elif m[0] == 'add_bill':
+            return str(self.add_bill(m[1], m[2], m[3], float(m[4])))
+        elif m[0] == 'get_residents':
+            return str(self.update_depts(0))
+
         elif m[0] == 'get_products_json':
             board = self.client.get_board('f0EDhQy7')
             return str(self.get_products(board).to_json())
         elif m[0] == 'get_residents_json':
             return str(self.get_residents().to_json())
-        elif m[0] == 'add_bill':
-            return str(self.add_bill(m[1], m[2], m[3], float(m[4])))
-        elif m[0] == 'update_depts':
-            return str(self.update_depts(0))
         else:
             return 'What? Want some candy?'
 
@@ -156,9 +147,11 @@ class KoKa(object):
                 return ('I see.. Well, then see into the green bowl under the black hat..\n'
             +'Usage:\n'
             +'get_products\n'
+            +'get_buyers\n'
+            +'add_product tej P=40 G=30 E=30\n'
+            +'add_record E tej 299\n'
             +'get_residents\n'
-            +'add_product name p% g% e% a%\n'
-            +'add_record buyer_name product_name value')
+            +'add_bill 2017-07-12 2017-08-14 elec 5588')
             ms = ms.split('\n')
             if len(ms) == 1:
                 return self.handle_message(ms[0])
