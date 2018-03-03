@@ -42,7 +42,8 @@ class Messenger(object):
                 return 'What? Want some candy?'
         except:
             e = sys.exc_info()
-            return 'Something terrible happend. %s' % e
+            print(e)
+            return 'Something terrible happend.'
 
     def get_residents(self, resident_id):
         residents = requests.get(resident_url).json()
