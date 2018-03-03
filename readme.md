@@ -1,16 +1,45 @@
-# Facebook Messenger Bot
-This is a simple python template that uses Flask to build a webhook for Facebook's Messenger Bot API.
+# What it can do:
 
-Read more in my [tutorial that uses this repository](https://blog.hartleybrody.com/fb-messenger-bot/).
+- reckoner
+  - http:
+    - update debts
+      - /habitations/<int:habitant_id>/update_depts
+      - trello data provider
+      - habitant_id is not used
+    - get bills
+      - /habitations/<int:habitant_id>/bills
+      - trello data provider
+      - habitant_id is not used
+    - get residents
+      - /habitations/<int:habitant_id>/residents
+      - trello data provider
+      - habitant_id is not used
+  - facebook
+    - add bill
+      - add bill to trello board
+      - trello data provider use that data
+    - get_residents
+      - add resident to trello board
+      - trello data provider use that data
+- kozos kassza
+  - facebook
+    - add record
+      - to trello board
+    - add product
+      - to trello board
+    - get products
+      - from trello board
+    - get buyers
+      - from trello board
 
-*New:* [Check out my Facebook Messenger Bot Course](https://facebook-messenger-bot.teachable.com/p/facebook-messenger-bot/). It walks you through the process of getting this bot hosted on heroku step-by-step, and also unlocks all the content that's hidden in this repo's branches.
+# Main classes
 
-## "Callback verification failed"
-
-![Facebook Error](https://cloud.githubusercontent.com/assets/18402893/21538944/f96fcd1e-cdc7-11e6-83ee-a866190d9080.png)
-
-The #1 error that gets reported in issues is that facebook returns an error message (like above) when trying to add the heroku endpoint to your facebook chat application.
-
-Our flask application intentionally returns a 403 Forbidden error if the token that facebook sends doesn't match the token you set using the heroku configuration variables.
-
-If you're getting this error, it likely means that you didn't set your heroku config values properly. Run `heroku config` from the command line within your application and verify that there's a key called `VERIFY_TOKEN` that has been set, and that it's set to the same value as what you've typed into the window on facebook.
+- trello_kk
+  - handle messages from facebook
+  - add/get data from directly from trello board
+- rent_provider_trello
+  - data provider class that integrate trello
+- reckoner
+  - use data provider that can be switched easily
+  - calculate debts
+  - prepare data for the ui
