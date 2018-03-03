@@ -8,15 +8,9 @@ import flask
 import requests
 from flask import Flask, request
 
-from reckoner.trello_kk import KoKa
-from reckoner.reckoner import RentReckoner
-from reckoner.rent_provider_trello import DataProvider
+from messenger import Messenger
 
-DATA_PATH = ""
-DATA_PROVIDER = DataProvider(DATA_PATH)
-RENT_RECKONER = RentReckoner(DATA_PROVIDER)
-
-KK = KoKa()
+messenger = Messenger()
 
 app = Flask(__name__)
 
@@ -34,7 +28,6 @@ def verify():
 def webhook():
 
     # endpoint for processing incoming messaging events
-
     data = request.get_json()
     log(data)  # you may not want to log every incoming message in production, but it's good for testing
 
@@ -52,7 +45,7 @@ def webhook():
                     else:
                         message_text = 'get_residents'
                     
-                    message_text_out = KK.handle_messages(message_text)
+                    message_text_out = messenger.handle_messages(message_text)
                     print(message_text_out)
                     send_message(sender_id, message_text_out)
 
@@ -66,29 +59,6 @@ def webhook():
                     pass
 
     return "ok", 200
-
-@app.route("/habitations/<int:habitant_id>/residents")
-def get_residents(habitant_id):
-    residents = json.dumps(RENT_RECKONER.get_residents_to_ui(
-        habitant_id), default=lambda o: o.__dict__)
-    resp = flask.Response(residents)
-    resp.headers['Access-Control-Allow-Origin'] = '*'
-    return resp
-
-@app.route("/habitations/<int:habitant_id>/bills")
-def get_bills(habitant_id):
-    bills = json.dumps(RENT_RECKONER.get_bills_to_ui(
-        habitant_id), default=lambda o: o.__dict__)
-    resp = flask.Response(bills)
-    resp.headers['Access-Control-Allow-Origin'] = '*'
-    return resp
-
-@app.route("/habitations/<int:habitant_id>/update_depts")
-def update_depts(habitant_id):
-    RENT_RECKONER.update_debts(habitant_id)
-    resp = flask.Response('updated')
-    resp.headers['Access-Control-Allow-Origin'] = '*'
-    return resp
 
 def send_message(recipient_id, message_text):
 
@@ -112,7 +82,6 @@ def send_message(recipient_id, message_text):
     if r.status_code != 200:
         log(r.status_code)
         log(r.text)
-
 
 def log(msg, *args, **kwargs):  # simple wrapper for logging to stdout on heroku
     try:
