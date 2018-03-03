@@ -3,9 +3,10 @@ import pandas as pd
 import requests
 import json
 
-bills_url = 'http://127.0.0.1:5000/habitations/1/bills'
-resident_url = 'http://127.0.0.1:5000/habitations/1/residents'
-update_debts_url = 'http://127.0.0.1:5000/habitations/1/update_depts'
+base = 'https://agile-stream-12274.herokuapp.com/'
+bills_url = base + 'habitations/1/bills'
+resident_url = base + 'habitations/1/residents'
+update_debts_url = base + 'habitations/1/update_depts'
 
 class Messenger(object):
 
