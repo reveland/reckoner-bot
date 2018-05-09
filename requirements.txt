@@ -11,3 +11,4 @@ pandas
 newrelic
 py-trello
 numpy
+viberbot
