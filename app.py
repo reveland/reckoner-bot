@@ -42,9 +42,9 @@ def incoming():
 
     if isinstance(viber_request, ViberMessageRequest):
         message = viber_request.message
-        # lets echo back
+        message_out = messenger.handle_messages(message)
         viber.send_messages(viber_request.sender.id, [
-            message
+            message_out
         ])
     elif isinstance(viber_request, ViberSubscribedRequest):
         viber.send_messages(viber_request.get_user.id, [
