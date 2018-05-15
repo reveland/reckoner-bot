@@ -11,6 +11,7 @@ from viberbot import Api
 from viberbot.api.bot_configuration import BotConfiguration
 from viberbot.api.messages import VideoMessage
 from viberbot.api.messages.text_message import TextMessage
+from viberbot.api.messages.keyboard_message import KeyboardMessage
 from viberbot.api.viber_requests import ViberConversationStartedRequest
 from viberbot.api.viber_requests import ViberFailedRequest
 from viberbot.api.viber_requests import ViberMessageRequest
@@ -43,8 +44,70 @@ def incoming():
     if isinstance(viber_request, ViberMessageRequest):
         message = viber_request.message
         message_out = messenger.handle_messages(message.text)
+        keyboard_string = '''{
+            "Type": "keyboard",
+            "Buttons": [{
+                "Columns": 2,
+                "Rows": 2,
+                "Text": "<br><font color=\\"#494E67\\"><b>RENT</b></font>",
+                "TextSize": "large",
+                "TextHAlign": "center",
+                "TextVAlign": "middle",
+                "ActionType": "reply",
+                "ActionBody": "RENT",
+                "BgColor": "#f4dfc1",
+                "BgMedia": "https://s3.amazonaws.com/splitwise/uploads/category/icon/slim/home/rent.png"
+            },{
+                "Columns": 2,
+                "Rows": 2,
+                "Text": "<br><font color=\\"#494E67\\"><b>WATER</b></font>",
+                "TextSize": "large",
+                "TextHAlign": "center",
+                "TextVAlign": "middle",
+                "ActionType": "reply",
+                "ActionBody": "WATER",
+                "BgColor": "#cee8f1",
+                "BgMedia": "https://s3.amazonaws.com/splitwise/uploads/category/icon/slim/utilities/water.png"
+            },{
+                "Columns": 2,
+                "Rows": 2,
+                "Text": "<br><font color=\\"#494E67\\"><b>GAS</b></font>",
+                "TextSize": "large",
+                "TextHAlign": "center",
+                "TextVAlign": "middle",
+                "ActionType": "reply",
+                "ActionBody": "GAS",
+                "BgColor": "#cee8f1",
+                "BgMedia": "https://s3.amazonaws.com/splitwise/uploads/category/icon/slim/utilities/heat-gas.png"
+            },{
+                "Columns": 2,
+                "Rows": 2,
+                "Text": "<br><font color=\\"#494E67\\"><b>INTERNET</b></font>",
+                "TextSize": "large",
+                "TextHAlign": "center",
+                "TextVAlign": "middle",
+                "ActionType": "reply",
+                "ActionBody": "INTERNET",
+                "BgColor": "#cee8f1",
+                "BgMedia": "https://s3.amazonaws.com/splitwise/uploads/category/icon/slim/utilities/tv-phone-internet.png"
+            },{
+                "Columns": 2,
+                "Rows": 2,
+                "Text": "<br><font color=\\"#494E67\\"><b>ELECTRICITY</b></font>",
+                "TextSize": "large",
+                "TextHAlign": "center",
+                "TextVAlign": "middle",
+                "ActionType": "reply",
+                "ActionBody": "ELECTRICITY",
+                "BgColor": "#cee8f1",
+                "BgMedia": "https://s3.amazonaws.com/splitwise/uploads/category/icon/slim/utilities/electricity.png"
+            }]
+        }'''
+        keyboard = json.loads(keyboard_string)
+        message_keyboard = KeyboardMessage(tracking_data=None, keyboard=keyboard)
         viber.send_messages(viber_request.sender.id, [
-            TextMessage(text=message_out)
+            TextMessage(text=message_out),
+            message_keyboard
         ])
     elif isinstance(viber_request, ViberSubscribedRequest):
         viber.send_messages(viber_request.get_user.id, [
